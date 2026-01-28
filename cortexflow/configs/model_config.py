@@ -18,7 +18,22 @@ class VLAModelType(Enum):
 
 @dataclass
 class ModelConfig:
-    """VLA 模型的架构配置"""
+    """VLA 模型的架构配置
+    
+    Attributes:
+        model_type: 模型类型
+        vision_encoder_dim: 视觉编码器隐藏层维度
+        encoder_dim: Transformer 编码器维度
+        decoder_dim: Transformer 解码器维度
+        num_encoder_layers: 编码器层数
+        num_decoder_layers: 解码器层数
+        num_heads: 注意力头数
+        head_dim: 每个注意力头的维度
+        action_dim: 动作空间维度
+        chunk_size: 动作序列长度
+        num_diffusion_steps: 扩散模型迭代步数
+        max_seq_len: 最大序列长度
+    """
     model_type: VLAModelType
     vision_encoder_dim: int = 1152
     encoder_dim: int = 2048

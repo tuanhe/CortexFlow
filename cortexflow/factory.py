@@ -48,6 +48,10 @@ def create_inference(
     tokenizer_path: Optional[str] = None,
     discrete_state_input: Optional[bool] = None,
     model_config: Optional[ModelConfig] = None,
+    # Token pruning
+    pruning_strategy: Optional[str] = None,
+    pruning_keep_ratio: float = 0.5,
+    pruning_min_tokens: int = 64,
     **kwargs
 ) -> CortexFlowEngine:
     """统一的推理引擎创建接口
@@ -64,30 +68,32 @@ def create_inference(
         tokenizer_path: tokenizer 路径
         discrete_state_input: 是否使用离散状态输入 (None 则使用模型默认值)
         model_config: 自定义模型配置 (提供则忽略其他模型配置参数)
+        pruning_strategy: Token 剪枝策略 ("topk", "attention", "spatial", "hybrid", None=不剪枝)
+        pruning_keep_ratio: 剪枝保留比例 (0.0-1.0)
+        pruning_min_tokens: 最少保留的 token 数量
         **kwargs: 其他配置参数
         
     Returns:
         配置好的 CortexFlowEngine
         
     Examples:
-        >>> # Pi0.5
-        >>> engine = create_inference("pi05", "checkpoint.pt", num_views=2)
+        >>> # Pi0.5 with Top-K pruning
+        >>> engine = create_inference(
+        ...     "pi05", "checkpoint.pt",
+        ...     num_views=2,
+        ...     pruning_strategy="topk",
+        ...     pruning_keep_ratio=0.5
+        ... )
         
         >>> # OpenVLA
         >>> engine = create_inference("openvla", "checkpoint.pt")
         
-        >>> # 自定义后端
-        >>> engine = create_inference("pi05", "checkpoint.pt", backend=BackendType.PYTORCH)
-        
-        >>> # 完全自定义
+        >>> # 自定义后端 + 空间剪枝
         >>> engine = create_inference(
-        ...     "pi05", 
-        ...     "checkpoint.pt",
-        ...     num_views=3,
-        ...     chunk_size=15,
-        ...     backend=BackendType.TRITON,
-        ...     use_cuda_graphs=True,
-        ...     tokenizer_path="tokenizer/"
+        ...     "pi05", "checkpoint.pt",
+        ...     backend=BackendType.PYTORCH,
+        ...     pruning_strategy="spatial",
+        ...     pool_size=2
         ... )
     """
     # 转换字符串为枚举
@@ -138,6 +144,17 @@ def create_inference(
     if discrete_state_input is None:
         discrete_state_input = defaults.get('discrete_state_input', True)
     
+    # 创建 token pruner
+    vision_token_pruner = None
+    if pruning_strategy is not None:
+        from .pruning import create_pruner
+        vision_token_pruner = create_pruner(
+            strategy=pruning_strategy,
+            keep_ratio=pruning_keep_ratio,
+            min_tokens=pruning_min_tokens,
+            **kwargs
+        )
+    
     inference_config = InferenceConfig(
         num_views=num_views,
         chunk_size=chunk_size,
@@ -147,8 +164,9 @@ def create_inference(
         use_cuda_graphs=use_cuda_graphs,
         tokenizer_path=tokenizer_path,
         discrete_state_input=discrete_state_input,
-        **kwargs
+        vision_token_pruner=vision_token_pruner,
+        **{k: v for k, v in kwargs.items() 
+           if k not in ['pool_size', 'use_spatial', 'spatial_pool_size']}
     )
     
     return CortexFlowEngine(checkpoint, model_config, inference_config)
-

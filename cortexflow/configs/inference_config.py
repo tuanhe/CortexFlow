@@ -4,8 +4,11 @@ Inference runtime configuration
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 import torch
+
+if TYPE_CHECKING:
+    from ..pruning import TokenPruner
 
 
 class BackendType(Enum):
@@ -19,7 +22,22 @@ class BackendType(Enum):
 
 @dataclass
 class InferenceConfig:
-    """推理运行时配置"""
+    """推理运行时配置
+    
+    Attributes:
+        num_views: 摄像头视角数量
+        chunk_size: 动作序列长度
+        backend: 使用的计算后端
+        device: 设备（cuda 或 cpu）
+        dtype: 数据类型精度
+        use_cuda_graphs: 是否使用 CUDA graphs 优化
+        tokenizer_path: tokenizer 路径
+        max_tokenize_len: 最大 token 长度
+        discrete_state_input: 是否使用离散状态输入
+        compile_mode: PyTorch 2.0 编译模式
+        enable_profiling: 是否启用性能分析
+        vision_token_pruner: 视觉 token 剪枝器
+    """
     num_views: int
     chunk_size: int
     backend: BackendType = BackendType.TRITON
@@ -31,6 +49,9 @@ class InferenceConfig:
     discrete_state_input: bool = True
     compile_mode: Optional[str] = None
     enable_profiling: bool = False
+    
+    # Token pruning
+    vision_token_pruner: Optional['TokenPruner'] = None
     
     # 性能优化选项
     prefetch_weights: bool = False

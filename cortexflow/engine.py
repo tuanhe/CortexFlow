@@ -222,8 +222,19 @@ class CortexFlowEngine:
     
     def _run_inference(self):
         """执行完整推理"""
+        # 1. 视觉编码
         self.backend.vision_encoder(self.buffers, self.weights)
+        
+        # 2. Token 剪枝（如果启用）
+        if self.inference_config.vision_token_pruner is not None:
+            self.buffers['vision_x'] = self.inference_config.vision_token_pruner.prune(
+                self.buffers['vision_x']
+            )
+        
+        # 3. Transformer 编码
         self.backend.transformer_encoder(self.buffers, self.weights)
+        
+        # 4. Transformer 解码（带扩散）
         self.backend.transformer_decoder(
             self.buffers,
             self.weights,
