@@ -17,8 +17,8 @@ from dataclasses import dataclass
 
 import torch
 
-from lerobot.configs.types import PipelineFeatureType, PolicyFeature
-from lerobot.utils.constants import OBS_IMAGES, OBS_PREFIX, OBS_STATE, OBS_STR
+from cortexflow.configs.types import PipelineFeatureType, PolicyFeature
+from cortexflow.utils.constants import OBS_IMAGES, OBS_PREFIX, OBS_STATE, OBS_STR
 
 from .pipeline import ObservationProcessorStep, ProcessorStepRegistry
 
@@ -27,7 +27,7 @@ from .pipeline import ObservationProcessorStep, ProcessorStepRegistry
 @ProcessorStepRegistry.register(name="libero_processor")
 class LiberoProcessorStep(ObservationProcessorStep):
     """
-    Processes LIBERO observations into the LeRobot format.
+    Processes LIBERO observations into the cortexflow format.
 
     This step handles the specific observation structure from LIBERO environments,
     which includes nested robot_state dictionaries and image observations.
@@ -86,7 +86,7 @@ class LiberoProcessorStep(ObservationProcessorStep):
         self, features: dict[PipelineFeatureType, dict[str, PolicyFeature]]
     ) -> dict[PipelineFeatureType, dict[str, PolicyFeature]]:
         """
-        Transforms feature keys from the LIBERO format to the LeRobot standard.
+        Transforms feature keys from the LIBERO format to the cortexflow standard.
         """
         new_features: dict[PipelineFeatureType, dict[str, PolicyFeature]] = {}
 
@@ -159,7 +159,7 @@ class LiberoProcessorStep(ObservationProcessorStep):
 @ProcessorStepRegistry.register(name="isaaclab_arena_processor")
 class IsaaclabArenaProcessorStep(ObservationProcessorStep):
     """
-    Processes IsaacLab Arena observations into LeRobot format.
+    Processes IsaacLab Arena observations into cortexflow format.
 
     **State Processing:**
     - Extracts state components from obs["policy"] based on `state_keys`.

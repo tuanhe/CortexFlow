@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-Real-Time Chunking (RTC) implementation for LeRobot.
+Real-Time Chunking (RTC) implementation for cortexflow.
 
 Based on Physical Intelligence's Kinetix implementation:
 https://github.com/Physical-Intelligence/real-time-chunking-kinetix/blob/main/src/model.py#L214
@@ -27,9 +27,9 @@ import math
 import torch
 from torch import Tensor
 
-from lerobot.configs.types import RTCAttentionSchedule
-from lerobot.policies.rtc.configuration_rtc import RTCConfig
-from lerobot.policies.rtc.debug_tracker import Tracker
+from cortexflow.configs.types import RTCAttentionSchedule
+from cortexflow.policies.rtc.configuration_rtc import RTCConfig
+from cortexflow.policies.rtc.debug_tracker import Tracker
 
 logger = logging.getLogger(__name__)
 

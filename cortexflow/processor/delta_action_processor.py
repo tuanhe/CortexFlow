@@ -16,7 +16,7 @@
 
 from dataclasses import dataclass
 
-from lerobot.configs.types import FeatureType, PipelineFeatureType, PolicyFeature
+from cortexflow.configs.types import FeatureType, PipelineFeatureType, PolicyFeature
 
 from .core import PolicyAction, RobotAction
 from .pipeline import ActionProcessorStep, ProcessorStepRegistry, RobotActionProcessorStep

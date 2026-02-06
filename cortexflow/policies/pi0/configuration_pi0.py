@@ -16,12 +16,12 @@
 
 from dataclasses import dataclass, field
 
-from lerobot.configs.policies import PreTrainedConfig
-from lerobot.configs.types import FeatureType, NormalizationMode, PolicyFeature
-from lerobot.optim.optimizers import AdamWConfig
-from lerobot.optim.schedulers import CosineDecayWithWarmupSchedulerConfig
-from lerobot.policies.rtc.configuration_rtc import RTCConfig
-from lerobot.utils.constants import ACTION, OBS_IMAGES, OBS_STATE
+from cortexflow.configs.policies import PreTrainedConfig
+from cortexflow.configs.types import FeatureType, NormalizationMode, PolicyFeature
+from cortexflow.optim.optimizers import AdamWConfig
+from cortexflow.optim.schedulers import CosineDecayWithWarmupSchedulerConfig
+from cortexflow.policies.rtc.configuration_rtc import RTCConfig
+from cortexflow.utils.constants import ACTION, OBS_IMAGES, OBS_STATE
 
 DEFAULT_IMAGE_SIZE = 224
 

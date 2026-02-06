@@ -30,10 +30,10 @@ from safetensors.torch import load_model as load_model_as_safetensor, save_model
 from torch import Tensor, nn
 from typing_extensions import Unpack
 
-from lerobot.configs.policies import PreTrainedConfig
-from lerobot.configs.train import TrainPipelineConfig
-from lerobot.policies.utils import log_model_loading_keys
-from lerobot.utils.hub import HubMixin
+from cortexflow.configs.policies import PreTrainedConfig
+from cortexflow.configs.train import TrainPipelineConfig
+from cortexflow.policies.utils import log_model_loading_keys
+from cortexflow.utils.hub import HubMixin
 
 T = TypeVar("T", bound="PreTrainedPolicy")
 
@@ -248,20 +248,20 @@ class PreTrainedPolicy(nn.Module, HubMixin, abc.ABC):
     def generate_model_card(
         self, dataset_repo_id: str, model_type: str, license: str | None, tags: list[str] | None
     ) -> ModelCard:
-        base_model = "lerobot/smolvla_base" if model_type == "smolvla" else None  # Set a base model
+        base_model = "cortexflow/smolvla_base" if model_type == "smolvla" else None  # Set a base model
 
         card_data = ModelCardData(
             license=license or "apache-2.0",
-            library_name="lerobot",
+            library_name="cortexflow",
             pipeline_tag="robotics",
-            tags=list(set(tags or []).union({"robotics", "lerobot", model_type})),
+            tags=list(set(tags or []).union({"robotics", "cortexflow", model_type})),
             model_name=model_type,
             datasets=dataset_repo_id,
             base_model=base_model,
         )
 
         template_card = (
-            files("lerobot.templates").joinpath("lerobot_modelcard_template.md").read_text(encoding="utf-8")
+            files("cortexflow.templates").joinpath("cortexflow_modelcard_template.md").read_text(encoding="utf-8")
         )
         card = ModelCard.from_template(card_data, template_str=template_card)
         card.validate()

@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-A generic script to migrate LeRobot policies with built-in normalization layers to the new
+A generic script to migrate cortexflow policies with built-in normalization layers to the new
 pipeline-based processor system.
 
 This script performs the following steps:
@@ -33,13 +33,13 @@ This script performs the following steps:
 6.  Optionally pushes all the new artifacts to the Hugging Face Hub.
 
 Usage:
-    python src/lerobot/processor/migrate_policy_normalization.py \
-        --pretrained-path lerobot/act_aloha_sim_transfer_cube_human \
+    python src/cortexflow/processor/migrate_policy_normalization.py \
+        --pretrained-path cortexflow/act_aloha_sim_transfer_cube_human \
         --push-to-hub \
         --branch main
 
 Note: This script now uses the modern `make_pre_post_processors` and `make_policy_config`
-factory functions from `lerobot.policies.factory` to create processors and configurations,
+factory functions from `cortexflow.policies.factory` to create processors and configurations,
 ensuring consistency with the current codebase.
 
 The script extracts normalization statistics from the old model's state_dict, creates clean
@@ -57,9 +57,9 @@ import torch
 from huggingface_hub import HfApi, hf_hub_download
 from safetensors.torch import load_file as load_safetensors
 
-from lerobot.configs.types import FeatureType, NormalizationMode, PolicyFeature
-from lerobot.policies.factory import get_policy_class, make_policy_config, make_pre_post_processors
-from lerobot.utils.constants import ACTION
+from cortexflow.configs.types import FeatureType, NormalizationMode, PolicyFeature
+from cortexflow.policies.factory import get_policy_class, make_policy_config, make_pre_post_processors
+from cortexflow.utils.constants import ACTION
 
 
 def extract_normalization_stats(state_dict: dict[str, torch.Tensor]) -> dict[str, dict[str, torch.Tensor]]:
@@ -423,7 +423,7 @@ def display_migration_summary_with_warnings(problematic_missing_keys: list[str])
     print("What to do next:")
     print("  1. Test your migrated model carefully to ensure it works as expected")
     print("  2. If you encounter issues, please open an issue at:")
-    print("     https://github.com/huggingface/lerobot/issues")
+    print("     https://github.com/huggingface/cortexflow/issues")
     print("  3. Include this migration log and the missing keys listed above")
     print()
     print("If the model works correctly despite these warnings, the missing keys")
@@ -438,7 +438,7 @@ def load_model_from_hub(
     Downloads and loads a model's state_dict and configs from the Hugging Face Hub.
 
     Args:
-        repo_id: The repository ID on the Hub (e.g., 'lerobot/aloha').
+        repo_id: The repository ID on the Hub (e.g., 'cortexflow/aloha').
         revision: The specific git revision (branch, tag, or commit hash) to use.
 
     Returns:
@@ -643,8 +643,8 @@ def main():
         dataset_repo_id = train_config.get("repo_id", "unknown")
     license = config.get("license", "apache-2.0")
 
-    tags = config.get("tags", ["robotics", "lerobot", policy_type]) or ["robotics", "lerobot", policy_type]
-    tags = set(tags).union({"robotics", "lerobot", policy_type})
+    tags = config.get("tags", ["robotics", "cortexflow", policy_type]) or ["robotics", "cortexflow", policy_type]
+    tags = set(tags).union({"robotics", "cortexflow", policy_type})
     tags = list(tags)
 
     # Generate model card
@@ -673,7 +673,7 @@ def main():
             # Separate commit description for PR body
             commit_description = """**Automated Policy Migration to PolicyProcessorPipeline**
 
-This PR migrates your model to the new LeRobot policy format using the modern PolicyProcessorPipeline architecture.
+This PR migrates your model to the new cortexflow policy format using the modern PolicyProcessorPipeline architecture.
 
 ## What Changed
 
@@ -681,7 +681,7 @@ This PR migrates your model to the new LeRobot policy format using the modern Po
 Your model now uses external PolicyProcessorPipeline components for data processing instead of built-in normalization layers. This provides:
 - **Modularity**: Separate preprocessing and postprocessing pipelines
 - **Flexibility**: Easy to swap, configure, and debug processing steps
-- **Compatibility**: Works with the latest LeRobot ecosystem
+- **Compatibility**: Works with the latest cortexflow ecosystem
 
 ### **Normalization Extraction**
 We've extracted normalization statistics from your model's state_dict and removed the built-in normalization layers:
@@ -699,15 +699,15 @@ We've extracted normalization statistics from your model's state_dict and remove
 
 ### **Benefits**
 - **Backward Compatible**: Your model behavior remains identical
-- **Future Ready**: Compatible with latest LeRobot features and updates
+- **Future Ready**: Compatible with latest cortexflow features and updates
 - **Debuggable**: Easy to inspect and modify processing steps
 - **Portable**: Processors can be shared and reused across models
 
 ### **Usage**
 ```python
 # Load your migrated model
-from lerobot.policies import get_policy_class
-from lerobot.processor import PolicyProcessorPipeline
+from cortexflow.policies import get_policy_class
+from cortexflow.processor import PolicyProcessorPipeline
 
 # The preprocessor and postprocessor are now external
 preprocessor = PolicyProcessorPipeline.from_pretrained("your-model-repo", config_filename="preprocessor_config.json")
@@ -720,7 +720,7 @@ action = policy(processed_batch)
 final_action = postprocessor(action)
 ```
 
-*Generated automatically by the LeRobot policy migration script*"""
+*Generated automatically by the cortexflow policy migration script*"""
 
         upload_kwargs = {
             "repo_id": hub_repo_id,

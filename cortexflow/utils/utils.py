@@ -134,7 +134,7 @@ def init_logging(
     file_level: str = "DEBUG",
     accelerator: Accelerator | None = None,
 ):
-    """Initialize logging configuration for LeRobot.
+    """Initialize logging configuration for cortexflow.
 
     In multi-GPU training, only the main process logs to console to avoid duplicate output.
     Non-main processes have console logging suppressed but can still log to file.

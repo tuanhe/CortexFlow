@@ -18,13 +18,13 @@ import os
 import numpy as np
 import rerun as rr
 
-from lerobot.processor import RobotAction, RobotObservation
+from cortexflow.processor import RobotAction, RobotObservation
 
 from .constants import ACTION, ACTION_PREFIX, OBS_PREFIX, OBS_STR
 
 
 def init_rerun(
-    session_name: str = "lerobot_control_loop", ip: str | None = None, port: int | None = None
+    session_name: str = "cortexflow_control_loop", ip: str | None = None, port: int | None = None
 ) -> None:
     """
     Initializes the Rerun SDK for visualizing the control loop.
@@ -37,7 +37,7 @@ def init_rerun(
     batch_size = os.getenv("RERUN_FLUSH_NUM_BYTES", "8000")
     os.environ["RERUN_FLUSH_NUM_BYTES"] = batch_size
     rr.init(session_name)
-    memory_limit = os.getenv("LEROBOT_RERUN_MEMORY_LIMIT", "10%")
+    memory_limit = os.getenv("cortexflow_RERUN_MEMORY_LIMIT", "10%")
     if ip and port:
         rr.connect_grpc(url=f"rerun+http://{ip}:{port}/proxy")
     else:

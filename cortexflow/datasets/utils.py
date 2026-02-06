@@ -349,7 +349,7 @@ def load_tasks(local_dir: Path) -> pandas.DataFrame:
 
 
 def write_episodes(episodes: Dataset, local_dir: Path) -> None:
-    """Write episode metadata to a parquet file in the LeRobot v3.0 format.
+    """Write episode metadata to a parquet file in the cortexflow v3.0 format.
     This function writes episode-level metadata to a single parquet file.
     Used primarily during dataset conversion (v2.1 → v3.0) and in test fixtures.
 
@@ -505,10 +505,10 @@ def get_safe_version(repo_id: str, version: str | packaging.version.Version) -> 
 
 
 def get_hf_features_from_features(features: dict) -> datasets.Features:
-    """Convert a LeRobot features dictionary to a `datasets.Features` object.
+    """Convert a cortexflow features dictionary to a `datasets.Features` object.
 
     Args:
-        features (dict): A LeRobot-style feature dictionary.
+        features (dict): A cortexflow-style feature dictionary.
 
     Returns:
         datasets.Features: The corresponding Hugging Face `datasets.Features` object.
@@ -546,7 +546,7 @@ def _validate_feature_names(features: dict[str, dict]) -> None:
     """Validate that feature names do not contain invalid characters.
 
     Args:
-        features (dict): The LeRobot features dictionary.
+        features (dict): The cortexflow features dictionary.
 
     Raises:
         ValueError: If any feature name contains '/'.
@@ -559,10 +559,10 @@ def _validate_feature_names(features: dict[str, dict]) -> None:
 def hw_to_dataset_features(
     hw_features: dict[str, type | tuple], prefix: str, use_video: bool = True
 ) -> dict[str, dict]:
-    """Convert hardware-specific features to a LeRobot dataset feature dictionary.
+    """Convert hardware-specific features to a cortexflow dataset feature dictionary.
 
     This function takes a dictionary describing hardware outputs (like joint states
-    or camera image shapes) and formats it into the standard LeRobot feature
+    or camera image shapes) and formats it into the standard cortexflow feature
     specification.
 
     Args:
@@ -573,7 +573,7 @@ def hw_to_dataset_features(
         use_video (bool): If True, image features are marked as "video", otherwise "image".
 
     Returns:
-        dict: A LeRobot features dictionary.
+        dict: A cortexflow features dictionary.
     """
     features = {}
     joint_fts = {
@@ -617,7 +617,7 @@ def build_dataset_frame(
     formatted as numpy arrays according to the feature specification.
 
     Args:
-        ds_features (dict): The LeRobot dataset features dictionary.
+        ds_features (dict): The cortexflow dataset features dictionary.
         values (dict): A dictionary of raw values from the hardware/environment.
         prefix (str): The prefix to filter features by (e.g., "observation"
             or "action").
@@ -645,7 +645,7 @@ def dataset_to_policy_features(features: dict[str, dict]) -> dict[str, PolicyFea
     action) and ensuring correct shapes (e.g., channel-first for images).
 
     Args:
-        features (dict): The LeRobot dataset features dictionary.
+        features (dict): The cortexflow dataset features dictionary.
 
     Returns:
         dict: A dictionary mapping feature keys to `PolicyFeature` objects.
@@ -663,7 +663,7 @@ def dataset_to_policy_features(features: dict[str, dict]) -> dict[str, PolicyFea
                 raise ValueError(f"Number of dimensions of {key} != 3 (shape={shape})")
 
             names = ft["names"]
-            # Backward compatibility for "channel" which is an error introduced in LeRobotDataset v2.0 for ported datasets.
+            # Backward compatibility for "channel" which is an error introduced in cortexflowDataset v2.0 for ported datasets.
             if names[2] in ["channel", "channels"]:  # (h, w, c) -> (c, h, w)
                 shape = (shape[2], shape[0], shape[1])
         elif key == OBS_ENV_STATE:
@@ -684,13 +684,13 @@ def dataset_to_policy_features(features: dict[str, dict]) -> dict[str, PolicyFea
 
 
 def combine_feature_dicts(*dicts: dict) -> dict:
-    """Merge LeRobot grouped feature dicts.
+    """Merge cortexflow grouped feature dicts.
 
     - For 1D numeric specs (dtype not image/video/string) with "names": we merge the names and recompute the shape.
     - For others (e.g. `observation.images.*`), the last one wins (if they are identical).
 
     Args:
-        *dicts: A variable number of LeRobot feature dictionaries to merge.
+        *dicts: A variable number of cortexflow feature dictionaries to merge.
 
     Returns:
         dict: A single merged feature dictionary.
@@ -748,9 +748,9 @@ def create_empty_dataset_info(
     """Create a template dictionary for a new dataset's `info.json`.
 
     Args:
-        codebase_version (str): The version of the LeRobot codebase.
+        codebase_version (str): The version of the cortexflow codebase.
         fps (int): The frames per second of the data.
-        features (dict): The LeRobot features dictionary for the dataset.
+        features (dict): The cortexflow features dictionary for the dataset.
         use_videos (bool): Whether the dataset will store videos.
         robot_type (str | None): The type of robot used, if any.
 
@@ -877,12 +877,12 @@ def create_branch(repo_id: str, *, branch: str, repo_type: str | None = None) ->
     api.create_branch(repo_id, repo_type=repo_type, branch=branch)
 
 
-def create_lerobot_dataset_card(
+def create_cortexflow_dataset_card(
     tags: list | None = None,
     dataset_info: dict | None = None,
     **kwargs,
 ) -> DatasetCard:
-    """Create a `DatasetCard` for a LeRobot dataset.
+    """Create a `DatasetCard` for a cortexflow dataset.
 
     Keyword arguments are used to replace values in the card template.
     Note: If specified, `license` must be a valid license identifier from
@@ -897,7 +897,7 @@ def create_lerobot_dataset_card(
     Returns:
         DatasetCard: The generated dataset card object.
     """
-    card_tags = ["LeRobot"]
+    card_tags = ["cortexflow"]
 
     if tags:
         card_tags += tags
@@ -917,7 +917,7 @@ def create_lerobot_dataset_card(
         ],
     )
 
-    card_template = (importlib.resources.files("lerobot.datasets") / "card_template.md").read_text()
+    card_template = (importlib.resources.files("cortexflow.datasets") / "card_template.md").read_text()
 
     return DatasetCard.from_template(
         card_data=card_data,
@@ -978,7 +978,7 @@ def validate_feature_dtype_and_shape(
 
     Args:
         name (str): The name of the feature.
-        feature (dict): The feature specification from the LeRobot features dictionary.
+        feature (dict): The feature specification from the cortexflow features dictionary.
         value: The value of the feature to validate.
 
     Returns:
@@ -1083,7 +1083,7 @@ def validate_episode_buffer(episode_buffer: dict, total_episodes: int, features:
     Args:
         episode_buffer (dict): The buffer containing data for a single episode.
         total_episodes (int): The current total number of episodes in the dataset.
-        features (dict): The LeRobot features dictionary for the dataset.
+        features (dict): The cortexflow features dictionary for the dataset.
 
     Raises:
         ValueError: If the buffer is invalid.

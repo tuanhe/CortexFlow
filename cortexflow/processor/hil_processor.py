@@ -24,9 +24,9 @@ import numpy as np
 import torch
 import torchvision.transforms.functional as F  # noqa: N812
 
-from lerobot.configs.types import PipelineFeatureType, PolicyFeature
-from lerobot.teleoperators.teleoperator import Teleoperator
-from lerobot.teleoperators.utils import TeleopEvents
+from cortexflow.configs.types import PipelineFeatureType, PolicyFeature
+from cortexflow.teleoperators.teleoperator import Teleoperator
+from cortexflow.teleoperators.utils import TeleopEvents
 
 from .core import EnvTransition, PolicyAction, TransitionKey
 from .pipeline import (
@@ -521,7 +521,7 @@ class RewardClassifierProcessorStep(ProcessorStep):
     def __post_init__(self):
         """Initializes the reward classifier model after the dataclass is created."""
         if self.pretrained_path is not None:
-            from lerobot.policies.sac.reward_model.modeling_classifier import Classifier
+            from cortexflow.policies.sac.reward_model.modeling_classifier import Classifier
 
             self.reward_classifier = Classifier.from_pretrained(self.pretrained_path)
             self.reward_classifier.to(self.device)

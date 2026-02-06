@@ -23,7 +23,7 @@ from typing import Any
 import numpy as np
 import torch
 
-from lerobot.utils.constants import ACTION, DONE, INFO, OBS_PREFIX, REWARD, TRUNCATED
+from cortexflow.utils.constants import ACTION, DONE, INFO, OBS_PREFIX, REWARD, TRUNCATED
 
 from .core import EnvTransition, PolicyAction, RobotAction, RobotObservation, TransitionKey
 
@@ -366,7 +366,7 @@ def batch_to_transition(batch: dict[str, Any]) -> EnvTransition:
 
 def transition_to_batch(transition: EnvTransition) -> dict[str, Any]:
     """
-    Convert an `EnvTransition` back to the canonical batch format used in LeRobot.
+    Convert an `EnvTransition` back to the canonical batch format used in cortexflow.
 
     This is the inverse of `batch_to_transition`.
 
@@ -374,7 +374,7 @@ def transition_to_batch(transition: EnvTransition) -> dict[str, Any]:
         transition: The `EnvTransition` to convert.
 
     Returns:
-        A batch dictionary with canonical LeRobot field names.
+        A batch dictionary with canonical cortexflow field names.
     """
     if not isinstance(transition, dict):
         raise ValueError(f"Transition should be a EnvTransition type (dict) got {type(transition)}")

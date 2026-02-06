@@ -26,7 +26,7 @@ import torch.nn.functional as F  # noqa: N812
 from torch import Tensor, nn
 from typing_extensions import Unpack
 
-from lerobot.utils.import_utils import _transformers_available
+from cortexflow.utils.import_utils import _transformers_available
 
 # Conditional import for type checking and lazy loading
 if TYPE_CHECKING or _transformers_available:
@@ -40,11 +40,11 @@ else:
     GemmaForCausalLM = None
     PaliGemmaForConditionalGeneration = None
 
-from lerobot.configs.policies import PreTrainedConfig
-from lerobot.policies.pi0.configuration_pi0 import DEFAULT_IMAGE_SIZE, PI0Config
-from lerobot.policies.pretrained import PreTrainedPolicy, T
-from lerobot.policies.rtc.modeling_rtc import RTCProcessor
-from lerobot.utils.constants import (
+from cortexflow.configs.policies import PreTrainedConfig
+from cortexflow.policies.pi0.configuration_pi0 import DEFAULT_IMAGE_SIZE, PI0Config
+from cortexflow.policies.pretrained import PreTrainedPolicy, T
+from cortexflow.policies.rtc.modeling_rtc import RTCProcessor
+from cortexflow.utils.constants import (
     ACTION,
     OBS_LANGUAGE_ATTENTION_MASK,
     OBS_LANGUAGE_TOKENS,
@@ -576,7 +576,7 @@ class PI0Pytorch(nn.Module):  # see openpi `PI0Pytorch`
             # Also compile the main forward pass used during training
             self.forward = torch.compile(self.forward, mode=config.compile_mode)
 
-        msg = """An incorrect transformer version is used, please create an issue on https://github.com/huggingface/lerobot/issues"""
+        msg = """An incorrect transformer version is used, please create an issue on https://github.com/huggingface/cortexflow/issues"""
 
         try:
             from transformers.models.siglip import check
@@ -924,7 +924,7 @@ class PI0Pytorch(nn.Module):  # see openpi `PI0Pytorch`
 
 
 class PI0Policy(PreTrainedPolicy):
-    """PI0 OpenPI Policy for LeRobot."""
+    """PI0 OpenPI Policy for cortexflow."""
 
     config_class = PI0Config
     name = "pi0"
@@ -1153,7 +1153,7 @@ class PI0Policy(PreTrainedPolicy):
     def _preprocess_images(self, batch: dict[str, Tensor]) -> tuple[list[Tensor], list[Tensor]]:
         """Preprocess images for the model.
 
-        Images from LeRobot are typically in [B, C, H, W] format and normalized to [0, 1].
+        Images from cortexflow are typically in [B, C, H, W] format and normalized to [0, 1].
         PaliGemma expects images in [B, C, H, W] format and normalized to [-1, 1].
         """
         images = []

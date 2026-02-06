@@ -17,7 +17,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any
 
-from lerobot.configs.types import PipelineFeatureType, PolicyFeature
+from cortexflow.configs.types import PipelineFeatureType, PolicyFeature
 
 from .pipeline import ObservationProcessorStep, ProcessorStepRegistry
 
@@ -29,7 +29,7 @@ class RenameObservationsProcessorStep(ObservationProcessorStep):
     A processor step that renames keys in an observation dictionary.
 
     This step is useful for creating a standardized data interface by mapping keys
-    from an environment's format to the format expected by a LeRobot policy or
+    from an environment's format to the format expected by a cortexflow policy or
     other downstream components.
 
     Attributes:

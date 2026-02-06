@@ -16,7 +16,7 @@
 
 from dataclasses import dataclass
 
-from lerobot.configs.types import PipelineFeatureType, PolicyFeature
+from cortexflow.configs.types import PipelineFeatureType, PolicyFeature
 
 from .converters import to_tensor
 from .core import EnvAction, EnvTransition, PolicyAction

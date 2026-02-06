@@ -564,7 +564,7 @@ class PI05Pytorch(nn.Module):  # see openpi `PI0Pytorch`
             # Also compile the main forward pass used during training
             self.forward = torch.compile(self.forward, mode=config.compile_mode)
 
-        msg = """An incorrect transformer version is used, please create an issue on https://github.com/huggingface/lerobot/issues"""
+        msg = """An incorrect transformer version is used, please create an issue on https://github.com/huggingface/cortexflow/issues"""
 
         try:
             from transformers.models.siglip import check
@@ -887,7 +887,7 @@ class PI05Pytorch(nn.Module):  # see openpi `PI0Pytorch`
 
 
 class PI05Policy(PreTrainedPolicy):
-    """PI05 Policy for LeRobot."""
+    """PI05 Policy for cortexflow."""
 
     config_class = PI05Config
     name = "pi05"
@@ -1122,7 +1122,7 @@ class PI05Policy(PreTrainedPolicy):
     def _preprocess_images(self, batch: dict[str, Tensor]) -> tuple[list[Tensor], list[Tensor]]:
         """Preprocess images for the model.
 
-        Images from LeRobot are typically in [B, C, H, W] format and normalized to [0, 1].
+        Images from cortexflow are typically in [B, C, H, W] format and normalized to [0, 1].
         PaliGemma expects images in [B, C, H, W] format and normalized to [-1, 1].
         """
         images = []

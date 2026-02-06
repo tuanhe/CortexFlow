@@ -29,14 +29,14 @@ from typing import TYPE_CHECKING, Any
 
 import torch
 
-from lerobot.configs.types import FeatureType, PipelineFeatureType, PolicyFeature
-from lerobot.utils.constants import (
+from cortexflow.configs.types import FeatureType, PipelineFeatureType, PolicyFeature
+from cortexflow.utils.constants import (
     ACTION_TOKEN_MASK,
     ACTION_TOKENS,
     OBS_LANGUAGE_ATTENTION_MASK,
     OBS_LANGUAGE_TOKENS,
 )
-from lerobot.utils.import_utils import _transformers_available
+from cortexflow.utils.import_utils import _transformers_available
 
 from .core import EnvTransition, RobotObservation, TransitionKey
 from .pipeline import ActionProcessorStep, ObservationProcessorStep, ProcessorStepRegistry
@@ -97,7 +97,7 @@ class TokenizerProcessorStep(ObservationProcessorStep):
         if not _transformers_available:
             raise ImportError(
                 "The 'transformers' library is not installed. "
-                "Please install it with `pip install 'lerobot[transformers-dep]'` to use TokenizerProcessorStep."
+                "Please install it with `pip install 'cortexflow[transformers-dep]'` to use TokenizerProcessorStep."
             )
 
         if self.tokenizer is not None:
@@ -322,7 +322,7 @@ class ActionTokenizerProcessorStep(ActionProcessorStep):
         if not _transformers_available:
             raise ImportError(
                 "The 'transformers' library is not installed. "
-                "Please install it with `pip install 'lerobot[transformers-dep]'` to use ActionTokenizerProcessorStep."
+                "Please install it with `pip install 'cortexflow[transformers-dep]'` to use ActionTokenizerProcessorStep."
             )
 
         if self.action_tokenizer_input_object is not None:

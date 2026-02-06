@@ -24,9 +24,9 @@ from typing import Any
 import torch
 from torch import Tensor
 
-from lerobot.configs.types import FeatureType, NormalizationMode, PipelineFeatureType, PolicyFeature
-from lerobot.datasets.lerobot_dataset import LeRobotDataset
-from lerobot.utils.constants import ACTION
+from cortexflow.configs.types import FeatureType, NormalizationMode, PipelineFeatureType, PolicyFeature
+from cortexflow.datasets.cortexflow_dataset import cortexflowDataset
+from cortexflow.utils.constants import ACTION
 
 from .converters import from_tensor_to_numpy, to_tensor
 from .core import EnvTransition, PolicyAction, TransitionKey
@@ -53,9 +53,9 @@ class _NormalizationMixin:
     Examples:
         ```python
         # Common use case: Override with dataset stats
-        from lerobot.datasets import LeRobotDataset
+        from cortexflow.datasets import cortexflowDataset
 
-        dataset = LeRobotDataset("my_dataset")
+        dataset = cortexflowDataset("my_dataset")
         pipeline = DataProcessorPipeline.from_pretrained(
             "model_path", overrides={"normalizer_processor": {"stats": dataset.meta.stats}}
         )
@@ -409,9 +409,9 @@ class NormalizerProcessorStep(_NormalizationMixin, ProcessorStep):
     """
 
     @classmethod
-    def from_lerobot_dataset(
+    def from_cortexflow_dataset(
         cls,
-        dataset: LeRobotDataset,
+        dataset: cortexflowDataset,
         features: dict[str, PolicyFeature],
         norm_map: dict[FeatureType, NormalizationMode],
         *,
@@ -420,7 +420,7 @@ class NormalizerProcessorStep(_NormalizationMixin, ProcessorStep):
         device: torch.device | str | None = None,
     ) -> NormalizerProcessorStep:
         """
-        Creates a `NormalizerProcessorStep` instance using statistics from a `LeRobotDataset`.
+        Creates a `NormalizerProcessorStep` instance using statistics from a `cortexflowDataset`.
 
         Args:
             dataset: The dataset from which to extract normalization statistics.
@@ -485,16 +485,16 @@ class UnnormalizerProcessorStep(_NormalizationMixin, ProcessorStep):
     """
 
     @classmethod
-    def from_lerobot_dataset(
+    def from_cortexflow_dataset(
         cls,
-        dataset: LeRobotDataset,
+        dataset: cortexflowDataset,
         features: dict[str, PolicyFeature],
         norm_map: dict[FeatureType, NormalizationMode],
         *,
         device: torch.device | str | None = None,
     ) -> UnnormalizerProcessorStep:
         """
-        Creates an `UnnormalizerProcessorStep` using statistics from a `LeRobotDataset`.
+        Creates an `UnnormalizerProcessorStep` using statistics from a `cortexflowDataset`.
 
         Args:
             dataset: The dataset from which to extract normalization statistics.

@@ -23,9 +23,9 @@ import draccus
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LambdaLR, LRScheduler
 
-from lerobot.datasets.utils import write_json
-from lerobot.utils.constants import SCHEDULER_STATE
-from lerobot.utils.io_utils import deserialize_json_into_object
+from cortexflow.datasets.utils import write_json
+from cortexflow.utils.constants import SCHEDULER_STATE
+from cortexflow.utils.io_utils import deserialize_json_into_object
 
 
 @dataclass

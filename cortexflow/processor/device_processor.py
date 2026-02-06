@@ -24,8 +24,8 @@ from typing import Any
 
 import torch
 
-from lerobot.configs.types import PipelineFeatureType, PolicyFeature
-from lerobot.utils.utils import get_safe_torch_device
+from cortexflow.configs.types import PipelineFeatureType, PolicyFeature
+from cortexflow.utils.utils import get_safe_torch_device
 
 from .core import EnvTransition, PolicyAction, TransitionKey
 from .pipeline import ProcessorStep, ProcessorStepRegistry

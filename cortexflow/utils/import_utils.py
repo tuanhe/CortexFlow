@@ -89,7 +89,7 @@ def make_device_from_device_class(config: ChoiceRegistry) -> Any:
         raise ValueError(f"Config should be an instance of `ChoiceRegistry`, got {type(config)}")
 
     config_cls = config.__class__
-    module_path = config_cls.__module__  # typical: lerobot_teleop_mydevice.config_mydevice
+    module_path = config_cls.__module__  # typical: cortexflow_teleop_mydevice.config_mydevice
     config_name = config_cls.__name__  # typical: MyDeviceConfig
 
     # Derive device class name (strip "Config")
@@ -102,8 +102,8 @@ def make_device_from_device_class(config: ChoiceRegistry) -> Any:
     parts = module_path.split(".")
     parent_module = ".".join(parts[:-1]) if len(parts) > 1 else module_path
     candidates = [
-        parent_module,  # typical: lerobot_teleop_mydevice
-        parent_module + "." + device_class_name.lower(),  # typical: lerobot_teleop_mydevice.mydevice
+        parent_module,  # typical: cortexflow_teleop_mydevice
+        parent_module + "." + device_class_name.lower(),  # typical: cortexflow_teleop_mydevice.mydevice
     ]
 
     # handle modules named like "config_xxx" -> try replacing that piece with "xxx"
@@ -142,13 +142,13 @@ def make_device_from_device_class(config: ChoiceRegistry) -> Any:
 
 def register_third_party_plugins() -> None:
     """
-    Discover and import third-party LeRobot plugins so they can register themselves.
+    Discover and import third-party cortexflow plugins so they can register themselves.
 
     This function uses `importlib.metadata` to find packages installed in the environment
-    (including editable installs) starting with 'lerobot_robot_', 'lerobot_camera_',
-    'lerobot_teleoperator_', or 'lerobot_policy_' and imports them.
+    (including editable installs) starting with 'cortexflow_robot_', 'cortexflow_camera_',
+    'cortexflow_teleoperator_', or 'cortexflow_policy_' and imports them.
     """
-    prefixes = ("lerobot_robot_", "lerobot_camera_", "lerobot_teleoperator_", "lerobot_policy_")
+    prefixes = ("cortexflow_robot_", "cortexflow_camera_", "cortexflow_teleoperator_", "cortexflow_policy_")
     imported: list[str] = []
     failed: list[str] = []
 

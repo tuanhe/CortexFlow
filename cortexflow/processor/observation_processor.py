@@ -20,8 +20,8 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from lerobot.configs.types import PipelineFeatureType, PolicyFeature
-from lerobot.utils.constants import OBS_ENV_STATE, OBS_IMAGE, OBS_IMAGES, OBS_STATE, OBS_STR
+from cortexflow.configs.types import PipelineFeatureType, PolicyFeature
+from cortexflow.utils.constants import OBS_ENV_STATE, OBS_IMAGE, OBS_IMAGES, OBS_STATE, OBS_STR
 
 from .pipeline import ObservationProcessorStep, ProcessorStepRegistry
 
@@ -30,10 +30,10 @@ from .pipeline import ObservationProcessorStep, ProcessorStepRegistry
 @ProcessorStepRegistry.register(name="observation_processor")
 class VanillaObservationProcessorStep(ObservationProcessorStep):
     """
-    Processes standard Gymnasium observations into the LeRobot format.
+    Processes standard Gymnasium observations into the cortexflow format.
 
     This step handles both image and state data from a typical observation dictionary,
-    preparing it for use in a LeRobot policy.
+    preparing it for use in a cortexflow policy.
 
     **Image Processing:**
     -   Converts channel-last (H, W, C), `uint8` images to channel-first (C, H, W),
@@ -132,10 +132,10 @@ class VanillaObservationProcessorStep(ObservationProcessorStep):
         self, features: dict[PipelineFeatureType, dict[str, PolicyFeature]]
     ) -> dict[PipelineFeatureType, dict[str, PolicyFeature]]:
         """
-        Transforms feature keys from the Gym standard to the LeRobot standard.
+        Transforms feature keys from the Gym standard to the cortexflow standard.
 
         This method standardizes the feature dictionary by renaming keys according
-        to LeRobot's conventions, ensuring that policies can be constructed correctly.
+        to cortexflow's conventions, ensuring that policies can be constructed correctly.
         It handles various raw key formats, including those with an "observation." prefix.
 
         **Renaming Rules:**
@@ -148,7 +148,7 @@ class VanillaObservationProcessorStep(ObservationProcessorStep):
             features: The policy features dictionary with Gym-style keys.
 
         Returns:
-            The policy features dictionary with standardized LeRobot keys.
+            The policy features dictionary with standardized cortexflow keys.
         """
         # Build a new features mapping keyed by the same FeatureType buckets
         # We assume callers already placed features in the correct FeatureType.

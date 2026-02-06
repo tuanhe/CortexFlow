@@ -28,12 +28,12 @@ import numpy as np
 import torch
 from deepdiff import DeepDiff
 
-from lerobot.datasets.lerobot_dataset import LeRobotDataset
-from lerobot.datasets.utils import DEFAULT_FEATURES
-from lerobot.policies.pretrained import PreTrainedPolicy
-from lerobot.policies.utils import prepare_observation_for_inference
-from lerobot.processor import PolicyAction, PolicyProcessorPipeline
-from lerobot.robots import Robot
+from cortexflow.datasets.cortexflow_dataset import cortexflowDataset
+from cortexflow.datasets.utils import DEFAULT_FEATURES
+from cortexflow.policies.pretrained import PreTrainedPolicy
+from cortexflow.policies.utils import prepare_observation_for_inference
+from cortexflow.processor import PolicyAction, PolicyProcessorPipeline
+from cortexflow.robots import Robot
 
 
 @cache
@@ -200,7 +200,7 @@ def sanity_check_dataset_name(repo_id, policy_cfg):
 
 
 def sanity_check_dataset_robot_compatibility(
-    dataset: LeRobotDataset, robot: Robot, fps: int, features: dict
+    dataset: cortexflowDataset, robot: Robot, fps: int, features: dict
 ) -> None:
     """
     Checks if a dataset's metadata is compatible with the current robot and recording setup.
@@ -209,7 +209,7 @@ def sanity_check_dataset_robot_compatibility(
     dataset against the current configuration to ensure that appended data will be consistent.
 
     Args:
-        dataset: The `LeRobotDataset` instance to check.
+        dataset: The `cortexflowDataset` instance to check.
         robot: The `Robot` instance representing the current hardware setup.
         fps: The current recording frequency (frames per second).
         features: The dictionary of features for the current recording session.

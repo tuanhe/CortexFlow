@@ -45,8 +45,8 @@ import torch
 from huggingface_hub import hf_hub_download
 from safetensors.torch import load_file, save_file
 
-from lerobot.configs.types import PipelineFeatureType, PolicyFeature
-from lerobot.utils.hub import HubMixin
+from cortexflow.configs.types import PipelineFeatureType, PolicyFeature
+from cortexflow.utils.hub import HubMixin
 
 from .converters import batch_to_transition, create_transition, transition_to_batch
 from .core import EnvAction, EnvTransition, PolicyAction, RobotAction, RobotObservation, TransitionKey
@@ -412,7 +412,7 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
 
         Args:
             save_directory: The directory where the pipeline will be saved. If None, saves to
-                HF_LEROBOT_HOME/processors/{sanitized_pipeline_name}.
+                HF_cortexflow_HOME/processors/{sanitized_pipeline_name}.
             repo_id: ID of your repository on the Hub. Used only if `push_to_hub=True`.
             push_to_hub: Whether or not to push your object to the Hugging Face Hub after saving it.
             card_kwargs: Additional arguments passed to the card template to customize the card.
@@ -421,11 +421,11 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
             **push_to_hub_kwargs: Additional key word arguments passed along to the push_to_hub method.
         """
         if save_directory is None:
-            # Use default directory in HF_LEROBOT_HOME
-            from lerobot.utils.constants import HF_LEROBOT_HOME
+            # Use default directory in HF_cortexflow_HOME
+            from cortexflow.utils.constants import HF_cortexflow_HOME
 
             sanitized_name = re.sub(r"[^a-zA-Z0-9_]", "_", self.name.lower())
-            save_directory = HF_LEROBOT_HOME / "processors" / sanitized_name
+            save_directory = HF_cortexflow_HOME / "processors" / sanitized_name
 
         # For direct saves (not through hub), handle config_filename
         if not push_to_hub and config_filename is not None:
@@ -478,7 +478,7 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
 
         2. **Config Validation** (_validate_loaded_config):
            - Format validation: Ensure config is valid processor format
-           - Migration detection: Guide users to migrate old LeRobot models
+           - Migration detection: Guide users to migrate old cortexflow models
            - Clear errors: Provide actionable error messages
 
         3. **Step Construction** (_build_steps_with_overrides):
@@ -491,7 +491,7 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
            - Provide helpful error messages with available keys
 
         **Migration Detection**:
-        - **Smart detection**: Analyzes JSON files to detect old LeRobot models
+        - **Smart detection**: Analyzes JSON files to detect old cortexflow models
         - **Precise targeting**: Avoids false positives on other HuggingFace models
         - **Clear guidance**: Provides exact migration command to run
         - **Error mode**: Always raises ProcessorMigrationError for clear user action
@@ -684,7 +684,7 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
 
         **Migration Detection Logic**:
         - Only triggered for local directories (not Hub repos)
-        - Analyzes all JSON files in directory to detect old LeRobot models
+        - Analyzes all JSON files in directory to detect old cortexflow models
         - Provides exact migration command with model path
 
         Args:
@@ -727,7 +727,7 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
            - **If "registry_name" exists**: Look up in ProcessorStepRegistry
              Example: {"registry_name": "normalize_step"} -> Get registered class
            - **Else use "class" field**: Dynamic import from full module path
-             Example: {"class": "lerobot.processor.normalize.NormalizeStep"}
+             Example: {"class": "cortexflow.processor.normalize.NormalizeStep"}
            - **Result**: (step_class, step_key) where step_key is used for overrides
 
         2. **Step Instantiation** (via _instantiate_step):
@@ -804,8 +804,8 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
         - **Else use "class" field**: Full module.ClassName import path
           - **Process**: Split "module.path.ClassName" into module + class parts
           - **Import**: Use importlib.import_module() + getattr()
-          - **Example**: "lerobot.processor.normalize.NormalizeStep"
-            a. Import module: "lerobot.processor.normalize"
+          - **Example**: "cortexflow.processor.normalize.NormalizeStep"
+            a. Import module: "cortexflow.processor.normalize"
             b. Get class: getattr(module, "NormalizeStep")
           - **step_key**: Use class_name ("NormalizeStep") for overrides
 
@@ -1006,7 +1006,7 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
         - **Extract available keys**: Build list of valid override keys from config
           a. **Registry steps**: Use "registry_name" directly
           b. **Import steps**: Extract class name from "class" field
-          - Example: "lerobot.processor.normalize.NormalizeStep" -> "NormalizeStep"
+          - Example: "cortexflow.processor.normalize.NormalizeStep" -> "NormalizeStep"
         - **Error message includes**:
           a. Invalid keys provided by user
           b. List of valid keys they can use
@@ -1062,10 +1062,10 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
         - **No migration**: ["processor.json", "config.json"] where processor.json is valid
         - **Migration needed**: ["config.json", "train.json"] where both are model configs
         - **No migration**: [] (empty directory)
-        - **Migration needed**: ["old_model_config.json"] with old LeRobot format
+        - **Migration needed**: ["old_model_config.json"] with old cortexflow format
 
         **Why this works**:
-        - **Precise detection**: Only suggests migration for actual old LeRobot models
+        - **Precise detection**: Only suggests migration for actual old cortexflow models
         - **Avoids false positives**: Won't trigger on other HuggingFace model types
         - **Graceful handling**: Ignores malformed JSON files
 
@@ -1126,7 +1126,7 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
            - **"registry_name"**: Registered step (preferred)
              Example: {"registry_name": "normalize_step", "config": {...}}
            - **"class"**: Full import path
-             Example: {"class": "lerobot.processor.normalize.NormalizeStep"}
+             Example: {"class": "cortexflow.processor.normalize.NormalizeStep"}
            - **If neither**: Invalid step (can't resolve class)
            - **If both**: Also valid (registry_name takes precedence)
 
@@ -1171,7 +1171,7 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
 
         This method is called when migration detection determines that a model
         directory contains configuration files but none are valid processor configs.
-        This typically indicates an old LeRobot model that needs migration.
+        This typically indicates an old cortexflow model that needs migration.
 
         **When this is called**:
         - User tries to load DataProcessorPipeline from local directory
@@ -1183,7 +1183,7 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
         - Constructs exact command user needs to run
         - Uses the migration script: migrate_policy_normalization.py
         - Includes the model path automatically
-        - Example: "python src/lerobot/processor/migrate_policy_normalization.py --pretrained-path /models/old_model"
+        - Example: "python src/cortexflow/processor/migrate_policy_normalization.py --pretrained-path /models/old_model"
 
         **Error Structure**:
         - **Always raises**: ProcessorMigrationError (never returns)
@@ -1206,7 +1206,7 @@ class DataProcessorPipeline(HubMixin, Generic[TInput, TOutput]):
             ProcessorMigrationError: Always raised (this method never returns normally)
         """
         migration_command = (
-            f"python src/lerobot/processor/migrate_policy_normalization.py --pretrained-path {model_path}"
+            f"python src/cortexflow/processor/migrate_policy_normalization.py --pretrained-path {model_path}"
         )
 
         raise ProcessorMigrationError(model_path, migration_command, original_error)

@@ -53,19 +53,19 @@ SCHEDULER_STATE = "scheduler_state.json"
 POLICY_PREPROCESSOR_DEFAULT_NAME = "policy_preprocessor"
 POLICY_POSTPROCESSOR_DEFAULT_NAME = "policy_postprocessor"
 
-if "LEROBOT_HOME" in os.environ:
+if "cortexflow_HOME" in os.environ:
     raise ValueError(
-        f"You have a 'LEROBOT_HOME' environment variable set to '{os.getenv('LEROBOT_HOME')}'.\n"
-        "'LEROBOT_HOME' is deprecated, please use 'HF_LEROBOT_HOME' instead."
+        f"You have a 'cortexflow_HOME' environment variable set to '{os.getenv('cortexflow_HOME')}'.\n"
+        "'cortexflow_HOME' is deprecated, please use 'HF_cortexflow_HOME' instead."
     )
 
 # cache dir
-default_cache_path = Path(HF_HOME) / "lerobot"
-HF_LEROBOT_HOME = Path(os.getenv("HF_LEROBOT_HOME", default_cache_path)).expanduser()
+default_cache_path = Path(HF_HOME) / "cortexflow"
+HF_cortexflow_HOME = Path(os.getenv("HF_cortexflow_HOME", default_cache_path)).expanduser()
 
 # calibration dir
-default_calibration_path = HF_LEROBOT_HOME / "calibration"
-HF_LEROBOT_CALIBRATION = Path(os.getenv("HF_LEROBOT_CALIBRATION", default_calibration_path)).expanduser()
+default_calibration_path = HF_cortexflow_HOME / "calibration"
+HF_cortexflow_CALIBRATION = Path(os.getenv("HF_cortexflow_CALIBRATION", default_calibration_path)).expanduser()
 
 
 # streaming datasets

@@ -23,7 +23,7 @@ Based on:
 
 from dataclasses import dataclass
 
-from lerobot.configs.types import RTCAttentionSchedule
+from cortexflow.configs.types import RTCAttentionSchedule
 
 
 @dataclass

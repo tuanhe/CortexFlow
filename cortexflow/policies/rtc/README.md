@@ -1,6 +1,6 @@
 # Real-Time Chunking (RTC)
 
-This module contains the LeRobot implementation of **Real-Time Chunking (RTC)**, an inference-time technique for flow-matching based policies.
+This module contains the cortexflow implementation of **Real-Time Chunking (RTC)**, an inference-time technique for flow-matching based policies.
 
 **Note**: RTC is not a policy itself, but rather an inference enhancement that works with flow-matching based policies including [π₀](../pi0/), [π₀.₅](../pi05/), and [SmolVLA](../smolvla/).
 
@@ -35,4 +35,4 @@ If you use Real-Time Chunking in your work, please cite:
 
 ## License
 
-This implementation follows the **Apache 2.0 License**, consistent with the LeRobot project.
+This implementation follows the **Apache 2.0 License**, consistent with the cortexflow project.
