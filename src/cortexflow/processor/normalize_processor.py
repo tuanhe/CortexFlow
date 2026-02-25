@@ -25,7 +25,6 @@ import torch
 from torch import Tensor
 
 from cortexflow.configs.types import FeatureType, NormalizationMode, PipelineFeatureType, PolicyFeature
-from cortexflow.datasets.lerobot_dataset import LeRobotDataset
 from cortexflow.utils.constants import ACTION
 
 from .converters import from_tensor_to_numpy, to_tensor
@@ -49,24 +48,6 @@ class _NormalizationMixin:
     `DataProcessorPipeline.from_pretrained()`), they are preserved even when
     `load_state_dict()` is called. This allows users to override normalization
     statistics from saved models while keeping the rest of the model state intact.
-
-    Examples:
-        ```python
-        # Common use case: Override with dataset stats
-        from cortexflow.datasets import LeRobotDataset
-
-        dataset = LeRobotDataset("my_dataset")
-        pipeline = DataProcessorPipeline.from_pretrained(
-            "model_path", overrides={"normalizer_processor": {"stats": dataset.meta.stats}}
-        )
-        # dataset.meta.stats will be used, not the stats from the saved model
-
-        # Custom stats override
-        custom_stats = {"action": {"mean": [0.0], "std": [1.0]}}
-        pipeline = DataProcessorPipeline.from_pretrained(
-            "model_path", overrides={"normalizer_processor": {"stats": custom_stats}}
-        )
-        ```
 
     Attributes:
         features: A dictionary mapping feature names to `PolicyFeature` objects, defining
@@ -408,40 +389,6 @@ class NormalizerProcessorStep(_NormalizationMixin, ProcessorStep):
     It is typically used in the pre-processing pipeline before feeding data to a policy.
     """
 
-    @classmethod
-    def from_lerobot_dataset(
-        cls,
-        dataset: LeRobotDataset,
-        features: dict[str, PolicyFeature],
-        norm_map: dict[FeatureType, NormalizationMode],
-        *,
-        normalize_observation_keys: set[str] | None = None,
-        eps: float = 1e-8,
-        device: torch.device | str | None = None,
-    ) -> NormalizerProcessorStep:
-        """
-        Creates a `NormalizerProcessorStep` instance using statistics from a `LeRobotDataset`.
-
-        Args:
-            dataset: The dataset from which to extract normalization statistics.
-            features: The feature definition for the processor.
-            norm_map: The mapping from feature types to normalization modes.
-            normalize_observation_keys: An optional set of observation keys to normalize.
-            eps: A small epsilon value for numerical stability.
-            device: The target device for the processor.
-
-        Returns:
-            A new instance of `NormalizerProcessorStep`.
-        """
-        return cls(
-            features=features,
-            norm_map=norm_map,
-            stats=dataset.meta.stats,
-            normalize_observation_keys=normalize_observation_keys,
-            eps=eps,
-            device=device,
-        )
-
     def __call__(self, transition: EnvTransition) -> EnvTransition:
         new_transition = transition.copy()
 
@@ -482,29 +429,6 @@ class UnnormalizerProcessorStep(_NormalizationMixin, ProcessorStep):
     normalized action output into a format that can be executed by a robot or
     environment.
     """
-
-    @classmethod
-    def from_lerobot_dataset(
-        cls,
-        dataset: LeRobotDataset,
-        features: dict[str, PolicyFeature],
-        norm_map: dict[FeatureType, NormalizationMode],
-        *,
-        device: torch.device | str | None = None,
-    ) -> UnnormalizerProcessorStep:
-        """
-        Creates an `UnnormalizerProcessorStep` using statistics from a `LeRobotDataset`.
-
-        Args:
-            dataset: The dataset from which to extract normalization statistics.
-            features: The feature definition for the processor.
-            norm_map: The mapping from feature types to normalization modes.
-            device: The target device for the processor.
-
-        Returns:
-            A new instance of `UnnormalizerProcessorStep`.
-        """
-        return cls(features=features, norm_map=norm_map, stats=dataset.meta.stats, device=device)
 
     def __call__(self, transition: EnvTransition) -> EnvTransition:
         new_transition = transition.copy()
