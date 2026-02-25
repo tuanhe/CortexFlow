@@ -12,7 +12,7 @@ instead of loading from a LeRobotDataset.
 import cv2
 import numpy as np
 import torch
-from cortexflow.policies.pi05 import PI05Policy
+from cortexflow import AutoPolicy
 from pi05_processor import PI05Processor
 
 # ── config ──────────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ tokenizer_path = "/home/x/Documents/models/paligemma-3b-pt-224/"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ── load policy & processor ─────────────────────────────────────────
-policy = PI05Policy.from_pretrained(model_id).to(device).eval()
+policy = AutoPolicy.from_pretrained(model_id).to(device).eval()
 processor = PI05Processor(model_id, device=str(device), tokenizer_path=tokenizer_path)
 
 

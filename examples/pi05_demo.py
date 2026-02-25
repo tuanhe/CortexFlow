@@ -2,15 +2,14 @@ import torch
 from cortexflow.datasets.lerobot_dataset import LeRobotDataset
 from cortexflow.policies.factory import make_pre_post_processors
 
-# Swap this import per-policy
-from cortexflow.policies.pi05 import PI05Policy
+from cortexflow import AutoPolicy
 
 # load a policy
 # model_id = "/home/x/Documents/models/lerobot/pi05_base/"  # <- swap checkpoint
 model_id = "/home/x/Documents/models/lerobot/pi05_base_migrated/"  # <- swap checkpoint
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-policy = PI05Policy.from_pretrained(model_id).to(device).eval()
+policy = AutoPolicy.from_pretrained(model_id).to(device).eval()
 
 preprocess, postprocess = make_pre_post_processors(
     policy.config,

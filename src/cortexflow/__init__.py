@@ -47,6 +47,7 @@ When implementing a new policy class (e.g. `DiffusionPolicy`) follow these steps
 import itertools
 
 from cortexflow.__version__ import __version__  # noqa: F401
+from cortexflow.policies.auto import AutoPolicy as AutoPolicy  # noqa: F401
 
 # TODO(rcadene): Improve policies and envs. As of now, an item in `available_policies`
 # refers to a yaml file AND a modeling name. Same for `available_envs` which refers to

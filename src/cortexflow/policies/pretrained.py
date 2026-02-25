@@ -14,15 +14,11 @@
 import abc
 import builtins
 import logging
-import os
 from pathlib import Path
 from typing import TypedDict, TypeVar
 
 import packaging
 import safetensors
-from huggingface_hub import hf_hub_download
-from huggingface_hub.constants import SAFETENSORS_SINGLE_FILE
-from huggingface_hub.errors import HfHubHTTPError
 from safetensors.torch import load_model as load_model_as_safetensor
 from torch import Tensor, nn
 from typing_extensions import Unpack
@@ -30,6 +26,8 @@ from typing_extensions import Unpack
 from cortexflow.configs.policies import PreTrainedConfig
 from cortexflow.policies.utils import log_model_loading_keys
 from cortexflow.utils.hub import HubMixin
+
+SAFETENSORS_SINGLE_FILE = "model.safetensors"
 
 T = TypeVar("T", bound="PreTrainedPolicy")
 
@@ -69,57 +67,43 @@ class PreTrainedPolicy(nn.Module, HubMixin, abc.ABC):
         pretrained_name_or_path: str | Path,
         *,
         config: PreTrainedConfig | None = None,
-        force_download: bool = False,
-        resume_download: bool | None = None,
-        proxies: dict | None = None,
-        token: str | bool | None = None,
-        cache_dir: str | Path | None = None,
-        local_files_only: bool = False,
-        revision: str | None = None,
         strict: bool = False,
         **kwargs,
     ) -> T:
-        """
+        """Load a pretrained policy from a local directory.
+
         The policy is set in evaluation mode by default using `policy.eval()` (dropout modules are
         deactivated). To train it, you should first set it back in training mode with `policy.train()`.
-        """
-        if config is None:
-            config = PreTrainedConfig.from_pretrained(
-                pretrained_name_or_path=pretrained_name_or_path,
-                force_download=force_download,
-                resume_download=resume_download,
-                proxies=proxies,
-                token=token,
-                cache_dir=cache_dir,
-                local_files_only=local_files_only,
-                revision=revision,
-                **kwargs,
-            )
-        model_id = str(pretrained_name_or_path)
-        instance = cls(config, **kwargs)
-        if os.path.isdir(model_id):
-            print("Loading weights from local directory")
-            model_file = os.path.join(model_id, SAFETENSORS_SINGLE_FILE)
-            policy = cls._load_as_safetensor(instance, model_file, config.device, strict)
-        else:
-            try:
-                model_file = hf_hub_download(
-                    repo_id=model_id,
-                    filename=SAFETENSORS_SINGLE_FILE,
-                    revision=revision,
-                    cache_dir=cache_dir,
-                    force_download=force_download,
-                    proxies=proxies,
-                    resume_download=resume_download,
-                    token=token,
-                    local_files_only=local_files_only,
-                )
-                policy = cls._load_as_safetensor(instance, model_file, config.device, strict)
-            except HfHubHTTPError as e:
-                raise FileNotFoundError(
-                    f"{SAFETENSORS_SINGLE_FILE} not found on the HuggingFace Hub in {model_id}"
-                ) from e
 
+        Args:
+            pretrained_name_or_path: Path to a local directory containing the model weights
+                and config.json.
+            config: Optional pre-loaded config. If None, it will be loaded from the directory.
+            strict: Whether to strictly enforce that the keys in the checkpoint match the model.
+            **kwargs: Additional keyword arguments forwarded to the policy constructor.
+
+        Raises:
+            FileNotFoundError: If the local directory or model file does not exist.
+        """
+        model_dir = Path(pretrained_name_or_path)
+        if not model_dir.is_dir():
+            raise FileNotFoundError(
+                f"Model directory not found: {model_dir}. "
+                "Only local model loading is supported. Please provide a valid local path."
+            )
+
+        if config is None:
+            config = PreTrainedConfig.from_pretrained(pretrained_name_or_path, **kwargs)
+
+        model_file = model_dir / SAFETENSORS_SINGLE_FILE
+        if not model_file.is_file():
+            raise FileNotFoundError(
+                f"Model weights file not found: {model_file}"
+            )
+
+        instance = cls(config, **kwargs)
+        logging.info(f"Loading weights from local directory: {model_dir}")
+        policy = cls._load_as_safetensor(instance, str(model_file), config.device, strict)
         policy.to(config.device)
         policy.eval()
         return policy

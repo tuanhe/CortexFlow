@@ -22,9 +22,6 @@ from pathlib import Path
 from typing import Any, TypeVar
 
 import draccus
-from huggingface_hub import hf_hub_download
-from huggingface_hub.constants import CONFIG_NAME
-from huggingface_hub.errors import HfHubHTTPError
 
 from cortexflow.configs.types import FeatureType, PolicyFeature
 from cortexflow.utils.constants import ACTION, OBS_STATE
@@ -158,50 +155,34 @@ class PreTrainedConfig(draccus.ChoiceRegistry, HubMixin, abc.ABC):  # type: igno
     def from_pretrained(
         cls: builtins.type[T],
         pretrained_name_or_path: str | Path,
-        *,
-        force_download: bool = False,
-        resume_download: bool | None = None,
-        proxies: dict[Any, Any] | None = None,
-        token: str | bool | None = None,
-        cache_dir: str | Path | None = None,
-        local_files_only: bool = False,
-        revision: str | None = None,
         **policy_kwargs: Any,
     ) -> T:
-        model_id = str(pretrained_name_or_path)
-        config_file: str | None = None
-        if Path(model_id).is_dir():
-            if CONFIG_NAME in os.listdir(model_id):
-                config_file = os.path.join(model_id, CONFIG_NAME)
-            else:
-                logger.error(f"{CONFIG_NAME} not found in {Path(model_id).resolve()}")
-        else:
-            try:
-                config_file = hf_hub_download(
-                    repo_id=model_id,
-                    filename=CONFIG_NAME,
-                    revision=revision,
-                    cache_dir=cache_dir,
-                    force_download=force_download,
-                    proxies=proxies,
-                    resume_download=resume_download,
-                    token=token,
-                    local_files_only=local_files_only,
-                )
-            except HfHubHTTPError as e:
-                raise FileNotFoundError(
-                    f"{CONFIG_NAME} not found on the HuggingFace Hub in {model_id}"
-                ) from e
+        """Load a policy config from a local directory.
 
-        # HACK: Parse the original config to get the config subclass, so that we can
+        Args:
+            pretrained_name_or_path: Path to a local directory containing config.json.
+
+        Raises:
+            FileNotFoundError: If the directory or config.json does not exist.
+        """
+        config_name = "config.json"
+        model_dir = Path(pretrained_name_or_path)
+        if not model_dir.is_dir():
+            raise FileNotFoundError(
+                f"Model directory not found: {model_dir}. "
+                "Only local model loading is supported. Please provide a valid local path."
+            )
+
+        config_file = model_dir / config_name
+        if not config_file.is_file():
+            raise FileNotFoundError(f"{config_name} not found in {model_dir.resolve()}")
+
+        config_file = str(config_file)
+
+        # Parse the original config to get the config subclass, so that we can
         # apply cli overrides.
-        # This is very ugly, ideally we'd like to be able to do that natively with draccus
-        # something like --policy.path (in addition to --policy.type)
         with draccus.config_type("json"):
             orig_config = draccus.parse(cls, config_file, args=[])
-
-        if config_file is None:
-            raise FileNotFoundError(f"{CONFIG_NAME} not found in {model_id}")
 
         with open(config_file) as f:
             config = json.load(f)

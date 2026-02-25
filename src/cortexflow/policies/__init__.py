@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .auto import AutoPolicy as AutoPolicy
 from .pi05.configuration_pi05 import PI05Config as PI05Config
 
 __all__ = [
+    "AutoPolicy",
     "PI05Config",
 ]

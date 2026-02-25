@@ -7,7 +7,7 @@ Usage:
 
 import torch
 from cortexflow.datasets.lerobot_dataset import LeRobotDataset
-from cortexflow.policies.pi05 import PI05Policy
+from cortexflow import AutoPolicy
 from cortexflow.processor import PolicyProcessorPipeline
 from cortexflow.processor.converters import (
     batch_to_transition,
@@ -23,7 +23,7 @@ episode_index = 0
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ── load policy ─────────────────────────────────────────────────────
-policy = PI05Policy.from_pretrained(model_id).to(device).eval()
+policy = AutoPolicy.from_pretrained(model_id).to(device).eval()
 
 # ── load pre/post processors directly from pretrained JSON configs ──
 preprocess = PolicyProcessorPipeline.from_pretrained(

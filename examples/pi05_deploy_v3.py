@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import torch
 from cortexflow.configs.types import FeatureType, NormalizationMode, PolicyFeature
-from cortexflow.policies.pi05 import PI05Policy
+from cortexflow import AutoPolicy
 from cortexflow.policies.pi05.processor_pi05 import Pi05PrepareStateTokenizerProcessorStep
 from cortexflow.processor import (
     AddBatchDimensionProcessorStep,
@@ -87,7 +87,7 @@ postprocessor = PolicyProcessorPipeline(
 )
 
 # ── load policy ─────────────────────────────────────────────────────
-policy = PI05Policy.from_pretrained(model_id).to(device).eval()
+policy = AutoPolicy.from_pretrained(model_id).to(device).eval()
 
 
 # ── helper: BGR numpy → model tensor ────────────────────────────────

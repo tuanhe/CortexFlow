@@ -8,7 +8,7 @@ Usage:
 import cv2
 import numpy as np
 import torch
-from cortexflow.policies.pi05 import PI05Policy
+from cortexflow import AutoPolicy
 
 import sys
 sys.path.insert(0, ".")
@@ -19,7 +19,7 @@ model_id = "/home/x/Documents/models/lerobot/pi05_base_migrated/"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ── load policy & processor ─────────────────────────────────────────
-policy = PI05Policy.from_pretrained(model_id).to(device).eval()
+policy = AutoPolicy.from_pretrained(model_id).to(device).eval()
 processor = PI05Processor(device=str(device))
 
 # ── simulate camera input using dataset ─────────────────────────────
