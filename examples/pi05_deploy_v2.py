@@ -23,7 +23,7 @@ policy = AutoPolicy.from_pretrained(model_id).to(device).eval()
 processor = PI05Processor(device=str(device))
 
 # ── simulate camera input using dataset ─────────────────────────────
-from cortexflow.datasets.lerobot_dataset import LeRobotDataset
+from lerobot_datasets.lerobot_dataset import LeRobotDataset
 
 dataset = LeRobotDataset("lerobot/libero")
 from_idx = dataset.meta.episodes["dataset_from_index"][0]

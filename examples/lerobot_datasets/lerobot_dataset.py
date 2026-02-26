@@ -33,9 +33,9 @@ import torch.utils
 from huggingface_hub import HfApi, snapshot_download
 from huggingface_hub.errors import RevisionNotFoundError
 
-from cortexflow.datasets.compute_stats import aggregate_stats, compute_episode_stats
-from cortexflow.datasets.image_writer import AsyncImageWriter, write_image
-from cortexflow.datasets.utils import (
+from lerobot_datasets.compute_stats import aggregate_stats, compute_episode_stats
+from lerobot_datasets.image_writer import AsyncImageWriter, write_image
+from lerobot_datasets.utils import (
     DEFAULT_EPISODES_PATH,
     DEFAULT_FEATURES,
     DEFAULT_IMAGE_PATH,
@@ -66,7 +66,7 @@ from cortexflow.datasets.utils import (
     write_stats,
     write_tasks,
 )
-from cortexflow.datasets.video_utils import (
+from lerobot_datasets.video_utils import (
     VideoFrame,
     concatenate_video_files,
     decode_video_frames,

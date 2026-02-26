@@ -39,7 +39,7 @@ from PIL import Image as PILImage
 from torchvision import transforms
 
 from cortexflow.configs.types import FeatureType, PolicyFeature
-from cortexflow.datasets.backward_compatibility import (
+from lerobot_datasets.backward_compatibility import (
     FUTURE_MESSAGE,
     BackwardCompatibilityError,
     ForwardCompatibilityError,
@@ -975,7 +975,7 @@ def create_lerobot_dataset_card(
         ],
     )
 
-    card_template = (importlib.resources.files("cortexflow.datasets") / "card_template.md").read_text()
+    card_template = (importlib.resources.files("lerobot_datasets") / "card_template.md").read_text()
 
     return DatasetCard.from_template(
         card_data=card_data,

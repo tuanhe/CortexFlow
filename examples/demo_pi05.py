@@ -1,6 +1,5 @@
 import torch
-# from cortexflow.datasets.cortexflow_dataset import cortexflowDataset
-from cortexflow.datasets.lerobot_dataset import LeRobotDataset
+from lerobot_datasets.lerobot_dataset import LeRobotDataset
 
 from cortexflow.policies.factory import make_pre_post_processors
 

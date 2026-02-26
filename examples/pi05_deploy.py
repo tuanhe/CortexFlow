@@ -65,7 +65,7 @@ def predict(
 
 # ── demo: use dataset frames to simulate camera input ───────────────
 if __name__ == "__main__":
-    from cortexflow.datasets.lerobot_dataset import LeRobotDataset
+    from lerobot_datasets.lerobot_dataset import LeRobotDataset
 
     # Load one frame from dataset as ground truth for comparison
     dataset = LeRobotDataset("lerobot/libero")

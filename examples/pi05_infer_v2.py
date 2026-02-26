@@ -6,7 +6,7 @@ Usage:
 """
 
 import torch
-from cortexflow.datasets.lerobot_dataset import LeRobotDataset
+from lerobot_datasets.lerobot_dataset import LeRobotDataset
 from cortexflow import AutoPolicy
 from pi05_processor import PI05Processor
 
