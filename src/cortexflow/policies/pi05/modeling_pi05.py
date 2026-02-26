@@ -517,8 +517,8 @@ class PI05Pytorch(nn.Module):  # see openpi `PI0Pytorch`
         self.paligemma_with_expert.gemma_expert.model.config._attn_implementation = "eager"  # noqa: SLF001
 
         # Enable TF32 when using float32 for ~25% speedup (< 0.05% precision loss)
-        if self.config.use_tf32 and self.config.dtype == "float32":
-            torch.set_float32_matmul_precision("high")
+        # if self.config.use_tf32 and self.config.dtype == "float32":
+            # torch.set_float32_matmul_precision("high")
 
         # Always compile denoise_step for inference acceleration
         self.denoise_step = torch.compile(
