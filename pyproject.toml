@@ -1,7 +1,6 @@
 # Installation:
-#   pip install -e '.[core]'      # core only (inference)
-#   pip install -e '.[examples]'  # core + examples dependencies
-#   pip install -e .              # everything
+#   pip install -e .              # core only (inference)
+#   pip install -e '.[benchmarks]' # core + benchmarks dependencies (lerobot_datasets)
 
 [build-system]
 requires = ["setuptools>=71.0.0"]
@@ -10,7 +9,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cortexflow"
 version = "0.0.1"
-description = "PI0.5 inference pipeline"
+description = "cortexflow inference pipeline"
 license = { text = "Apache-2.0" }
 requires-python = ">=3.10"
 
@@ -25,29 +24,10 @@ dependencies = [
     "huggingface-hub",
     "datasets>=3.0.0,<4.0.0",
     "accelerate",
-    "opencv-python-headless>=4.9.0",
-    "pandas",
-    "pyarrow",
-    "Pillow",
-    "av>=12.0.0",
-    "fsspec",
 ]
 
 [project.optional-dependencies]
-core = [
-    "torch>=2.2.1",
-    "torchvision>=0.17.0",
-    "numpy",
-    "safetensors>=0.4.3,<1.0.0",
-    "packaging>=24.2",
-    "draccus>=0.9.0,<1.0.0",
-    "transformers @ git+https://github.com/huggingface/transformers.git@fix/lerobot_openpi",
-    "huggingface-hub",
-    "datasets>=3.0.0,<4.0.0",
-    "accelerate",
-]
-examples = [
-    "cortexflow[core]",
+benchmarks = [
     "opencv-python-headless>=4.9.0",
     "pandas",
     "pyarrow",

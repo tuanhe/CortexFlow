@@ -5,6 +5,8 @@ Usage:
     python examples/pi05_deploy_v2.py
 """
 
+import os
+
 import cv2
 import numpy as np
 import torch
@@ -22,12 +24,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 policy = AutoPolicy.from_pretrained(model_id).to(device).eval()
 processor = PI05Processor(device=str(device))
 
-# ── simulate camera input using dataset ─────────────────────────────
-from lerobot_datasets.lerobot_dataset import LeRobotDataset
-
-dataset = LeRobotDataset("lerobot/libero")
-from_idx = dataset.meta.episodes["dataset_from_index"][0]
-frame = dict(dataset[from_idx])
+# ── load sample frame to simulate camera input ──────────────────────
+frame = torch.load(os.path.join(os.path.dirname(__file__), "sample_frame.pt"), weights_only=False)
 
 # Convert dataset tensors to what cameras would produce (BGR uint8 numpy)
 def tensor_to_bgr(t: torch.Tensor) -> np.ndarray:

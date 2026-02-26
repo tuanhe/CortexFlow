@@ -5,9 +5,10 @@ Usage:
     python pi05_deploy.py
 
 This script shows how to run PI0.5 inference with raw numpy/BGR images
-(as you'd get from cv2.VideoCapture) and a user-provided task string,
-instead of loading from a LeRobotDataset.
+(as you'd get from cv2.VideoCapture) and a user-provided task string.
 """
+
+import os
 
 import cv2
 import numpy as np
@@ -63,14 +64,9 @@ def predict(
     return action.squeeze(0).numpy()
 
 
-# ── demo: use dataset frames to simulate camera input ───────────────
+# ── demo: use saved frame to simulate camera input ───────────────
 if __name__ == "__main__":
-    from lerobot_datasets.lerobot_dataset import LeRobotDataset
-
-    # Load one frame from dataset as ground truth for comparison
-    dataset = LeRobotDataset("lerobot/libero")
-    from_idx = dataset.meta.episodes["dataset_from_index"][0]
-    frame = dict(dataset[from_idx])
+    frame = torch.load(os.path.join(os.path.dirname(__file__), "sample_frame.pt"), weights_only=False)
 
     # Simulate what you'd get from cameras:
     # convert [C,H,W] float RGB tensor → [H,W,C] uint8 BGR numpy (like cv2 output)

@@ -6,6 +6,8 @@ Usage:
     python examples/pi05_deploy_v3.py
 """
 
+import os
+
 import cv2
 import numpy as np
 import torch
@@ -117,13 +119,9 @@ def predict(
     return action.squeeze(0).numpy()
 
 
-# ── demo: simulate camera input from dataset ────────────────────────
+# ── demo: simulate camera input from saved frame ────────────────────
 if __name__ == "__main__":
-    from lerobot_datasets.lerobot_dataset import LeRobotDataset
-
-    dataset = LeRobotDataset("lerobot/libero")
-    from_idx = dataset.meta.episodes["dataset_from_index"][0]
-    frame = dict(dataset[from_idx])
+    frame = torch.load(os.path.join(os.path.dirname(__file__), "sample_frame.pt"), weights_only=False)
 
     def tensor_to_bgr(t: torch.Tensor) -> np.ndarray:
         rgb = (t.permute(1, 2, 0).numpy() * 255).astype(np.uint8)

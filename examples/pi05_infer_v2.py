@@ -5,15 +5,14 @@ Usage:
     python pi05_demo_v2.py
 """
 
+import os
+
 import torch
-from lerobot_datasets.lerobot_dataset import LeRobotDataset
 from cortexflow import AutoPolicy
 from pi05_processor import PI05Processor
 
 # ── config ──────────────────────────────────────────────────────────
 model_id = "/home/x/Documents/models/lerobot/pi05_base_migrated/"
-dataset_id = "lerobot/libero"
-episode_index = 0
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ── load policy ─────────────────────────────────────────────────────
@@ -25,12 +24,8 @@ processor = PI05Processor(
     tokenizer_path="/home/x/Documents/models/paligemma-3b-pt-224/",
 )
 
-# ── load dataset & pick a frame ─────────────────────────────────────
-dataset = LeRobotDataset(dataset_id)
-from_idx = dataset.meta.episodes["dataset_from_index"][episode_index]
-frame = dict(dataset[from_idx])
-
-print(f"frame_index : {from_idx}")
+# ── load sample frame ──────────────────────────────────────────────
+frame = torch.load(os.path.join(os.path.dirname(__file__), "sample_frame.pt"), weights_only=False)
 print(f"frame length: {len(frame)}")
 
 # ── inference ───────────────────────────────────────────────────────

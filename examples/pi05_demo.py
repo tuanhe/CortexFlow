@@ -1,5 +1,7 @@
+import os
+
 import torch
-from lerobot_datasets.lerobot_dataset import LeRobotDataset
+
 from cortexflow.policies.factory import make_pre_post_processors
 
 from cortexflow import AutoPolicy
@@ -16,29 +18,20 @@ preprocess, postprocess = make_pre_post_processors(
     model_id,
     preprocessor_overrides={"device_processor": {"device": str(device)}},
 )
-# load a lerobotdataset (we will replace with a simpler dataset)
-dataset = LeRobotDataset("lerobot/libero")
 
-# pick an episode
-episode_index = 0
+# load a sample frame
+frame = torch.load(os.path.join(os.path.dirname(__file__), "sample_frame.pt"), weights_only=False)
 
-# each episode corresponds to a contiguous range of frame indices
-from_idx = dataset.meta.episodes["dataset_from_index"][episode_index]
-to_idx   = dataset.meta.episodes["dataset_to_index"][episode_index]
+# ── inference ───────────────────────────────────────────────────────
+# torch.manual_seed(42)
+# torch.cuda.manual_seed(42)
 
-# get a single frame from that episode (e.g. the first frame)
-frame_index = from_idx
-frame = dict(dataset[frame_index])
 
-print(f"frame_index : {frame_index}")
 print(f"frame length: {len(frame)}")
-
-torch.manual_seed(42)
-torch.cuda.manual_seed(42)
 
 batch = preprocess(frame)
 with torch.inference_mode():
-    print(f"frame : {frame}")
+    # print(f"frame : {frame}")
     pred_action = policy.select_action(batch)
     # use your policy postprocess, this post process the action
     # for instance unnormalize the actions, detokenize it etc..
