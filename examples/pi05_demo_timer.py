@@ -42,6 +42,8 @@ print("[Timer] Warmup done")
 # ── timed run ─────────────────────────────────────────────────────
 # reset to clear action cache, force a real model forward pass
 policy.reset()
+torch.manual_seed(42)
+torch.cuda.manual_seed(42)
 
 t_pre_start = time.perf_counter()
 batch = preprocess(frame)
