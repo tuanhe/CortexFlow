@@ -19,6 +19,7 @@ from dataclasses import dataclass, field
 from cortexflow.configs.policies import PreTrainedConfig
 from cortexflow.configs.types import FeatureType, NormalizationMode, PolicyFeature
 from cortexflow.policies.rtc.configuration_rtc import RTCConfig
+from cortexflow.policies.vision_pruning.configuration_vision_pruning import VisionPruningConfig
 from cortexflow.utils.constants import ACTION, OBS_IMAGES, OBS_STATE
 
 DEFAULT_IMAGE_SIZE = 224
@@ -50,6 +51,9 @@ class PI05Config(PreTrainedConfig):
 
     # Real-Time Chunking (RTC) configuration
     rtc_config: RTCConfig | None = None
+
+    # Vision token pruning configuration
+    vision_pruning_config: VisionPruningConfig | None = None
 
     image_resolution: tuple[int, int] = (
         DEFAULT_IMAGE_SIZE,

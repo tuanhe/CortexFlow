@@ -473,10 +473,11 @@ class PaliGemmaWithExpertModel(
 class PI05Pytorch(nn.Module):  # see openpi `PI0Pytorch`
     """Core PI05 PyTorch model."""
 
-    def __init__(self, config: PI05Config, rtc_processor: RTCProcessor | None = None):
+    def __init__(self, config: PI05Config, rtc_processor: RTCProcessor | None = None, vision_pruner=None):
         super().__init__()
         self.config = config
         self.rtc_processor = rtc_processor
+        self.vision_pruner = vision_pruner
 
         paligemma_config = get_gemma_config(config.paligemma_variant)
         action_expert_config = get_gemma_config(config.action_expert_variant)
@@ -563,6 +564,11 @@ class PI05Pytorch(nn.Module):  # see openpi `PI0Pytorch`
                 return self.paligemma_with_expert.embed_image(img)
 
             img_emb = self._apply_checkpoint(image_embed_func, img)
+            
+            ## vision pruning
+            if self.vision_pruner is not None:
+                img_emb = self.vision_pruner.prune(img_emb)
+            
             bsize, num_img_embs = img_emb.shape[:2]
 
             embs.append(img_emb)
@@ -783,7 +789,8 @@ class PI05Policy(PreTrainedPolicy):
 
         # Initialize the core PI05 model
         self.init_rtc_processor()
-        self.model = PI05Pytorch(config, rtc_processor=self.rtc_processor)
+        self.init_vision_pruner()
+        self.model = PI05Pytorch(config, rtc_processor=self.rtc_processor, vision_pruner=self.vision_pruner)
 
         self.model.to(config.device)
 
@@ -984,6 +991,18 @@ class PI05Policy(PreTrainedPolicy):
             model_value = getattr(self, "model", None)
             if model_value is not None:
                 model_value.rtc_processor = self.rtc_processor
+
+    def init_vision_pruner(self):
+        """Initialize vision pruner if vision pruning is enabled in config."""
+        self.vision_pruner = None
+        if self.config.vision_pruning_config is not None:
+            from cortexflow.policies.vision_pruning.modeling_vision_pruning import create_vision_pruner
+
+            self.vision_pruner = create_vision_pruner(self.config.vision_pruning_config)
+
+            model_value = getattr(self, "model", None)
+            if model_value is not None:
+                model_value.vision_pruner = self.vision_pruner
 
     def _rtc_enabled(self) -> bool:
         return self.config.rtc_config is not None and self.config.rtc_config.enabled
